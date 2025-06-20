@@ -1,12 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Hello World!</title>
-</head>
-<body>
+---
+- name: Test Playbook fot Patching Report
+  hosts: all
+  gather_facts: False
+  
+  tasks:
+  - name: Run uname command to capture kernel version
+    shell: uname -a | awk '{print $2","$3}'
+    register: uname_r
 
-<h1>Hello world!</h1>
-<p>This is the first file in my new Git Repo.</p>
+  - name: OS Release capture
+    shell: |
+      cat /etc/os-release | grep 'SUPPORT_PRODUCT=' |  tr -d '"' | awk -F'=' '{print $2}'
+    register: os_rel
 
-</body>
-</html>
+  - name: OS Product Version
+    shell: |
+      cat /etc/os-release | grep 'SUPPORT_PRODUCT_VERSION' |  awk -F'=' '{print $2}'| tr -d '"'
+    register: os_rel_ver
+
+  - name: Kernel Version Latest
+    shell: |
+      rpm -qa --last kernel | head -1|awk '{print $3 $4 $5}'
+    register: rpm_kernel_time
+
+  - name: Kernel Install Time
+    shell: |
+      a=`rpm -q --queryformat "%{INSTALLTIME}\n" kernel | sort -r| head -1`
+      b=`date -d "01/12/2024" +"%s"`
+      if [ $a -gt $b ]; then echo "OK"; else  echo "NOK"; fi
+    register: patch_compliance
+
+  - name: Copy data to report
+    ansible.builtin.lineinfile:
+      path: /tmp/Patch_report.csv
+      line: "{{ item['UNAME']}},{{ item['REL'] }},{{ item['VER'] }},{{ item['KERNELTIME'] }},{{ item['COMPLIANCE'] }}"
+      #line: "{{ uname_r.stdout }},{{ os_rel.stdout }},{{ os_rel_ver.stdout }},{{ rpm_kernel_time.stdout }},{{ patch_compliance.stdout }}"
+      create: true
+    delegate_to: localhost
+    loop:
+     - { UNAME: "Server_Name,Kernel_Version",REL: "OS_Name",VER: "OS_Version",KERNELTIME: "Patch_Time",COMPLIANCE: "Patch_Compliance" }
+     - { UNAME: "{{ uname_r.stdout }}", REL: "{{ os_rel.stdout }}", VER: "{{ os_rel_ver.stdout }}", KERNELTIME: "{{ rpm_kernel_time.stdout }}", COMPLIANCE: "{{ patch_compliance.stdout }}" }
+    throttle: 1
