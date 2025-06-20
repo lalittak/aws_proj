@@ -41,3 +41,7 @@
      - { UNAME: "Server_Name,Kernel_Version",REL: "OS_Name",VER: "OS_Version",KERNELTIME: "Patch_Time",COMPLIANCE: "Patch_Compliance" }
      - { UNAME: "{{ uname_r.stdout }}", REL: "{{ os_rel.stdout }}", VER: "{{ os_rel_ver.stdout }}", KERNELTIME: "{{ rpm_kernel_time.stdout }}", COMPLIANCE: "{{ patch_compliance.stdout }}" }
     throttle: 1
+
+  - name: Pause for 300 seconds
+    ansible.builtin.pause:
+      seconds: 300
