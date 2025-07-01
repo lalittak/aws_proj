@@ -5,5 +5,5 @@
   
   tasks:
   - name: Run uname command to capture kernel version
-    shell: pwd;df;cat /mnt/lalit.txt
+    shell: pwd;df;ls /mnt
     delegate_to: localhost
