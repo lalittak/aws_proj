@@ -1,3 +1,9 @@
 ---
-  tasks:
+- name: Test Playbook fot Patching Report
+  hosts: all
+  gather_facts: False
   
+  tasks:
+  - name: Run uname command to capture kernel version
+    shell: cat /data/lalit.txt
+    delegate_to: localhost
