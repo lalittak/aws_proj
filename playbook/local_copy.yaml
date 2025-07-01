@@ -12,6 +12,6 @@
   - name: copy to file
     lineinfile:
       path: /runner/project/playbook/output.txt
-      line: {{ out1.stdout }}
+      line: "{{ out1.stdout }}"
       create: yes
     delegate_to: localhost
