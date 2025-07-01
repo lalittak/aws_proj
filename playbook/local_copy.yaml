@@ -7,3 +7,11 @@
   - name: Run uname command to capture kernel version
     shell: pwd;ls; df; cat /etc/hosts
     delegate_to: localhost
+    register: out1
+
+  - name: copy to file
+    lineinfile:
+      path: /runner/project/playbook/output.txt
+      line: {{ out1.stdout }}
+      create: yes
+    delegate_to: localhost
