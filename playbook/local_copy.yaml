@@ -5,7 +5,7 @@
   
   tasks:
   - name: Run uname command to capture kernel version
-    shell: pwd;ls; df; cat /etc/hosts
+    shell: pwd;ls; df; ls -l /mnt
     delegate_to: localhost
     register: out1
 
