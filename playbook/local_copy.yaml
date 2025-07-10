@@ -5,7 +5,7 @@
   
   tasks:
   - name: Run uname command to capture kernel version
-    shell: pwd;ls; df; ls -l /mnt; ls -l /mnt/data
+    shell: id -a;ls; df; ls -l /mnt; ls -l /mnt/data
     delegate_to: localhost
     register: out1
 
